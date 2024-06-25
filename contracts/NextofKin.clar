@@ -1,4 +1,3 @@
-
 ;; title: NextofKin
 ;; version:
 ;; summary:
@@ -8,24 +7,22 @@
 ;;
 
 ;; token definitions
-(define-fungible-token token)
 ;;
 
 ;; constants
 (define-constant deposit-charge-rate 1)
 (define-constant withdrawal-charge-rate 3)
 (define-constant inactivity-period 525600) ;;1 year in minutes
-;;
+(define-constant charge-recepient 'STGW7JMFAD2CQ2EP8JC4XDF9AZXGP1XS74M74DH8)
 
 ;; data vars
 ;;
 
 ;; data maps
-(define-map deposits principal principal)
-(define-map last-activity principal int)
-(define-map designated-recipient principal principal)
-(define-map designated-amount principal int)
-(define-map authorized principal (define-map principal bool))
+(define-map deposits {owner: principal} {amount: int})
+(define-map last-activity {owner:principal} {last-activity: int})
+(define-map principal-to-recepients {owner: principal} {recepients: (list 10 principal)})
+(define-map authorized {owner: principal} {recepients: (list 10 principal), status: bool})
 ;;
 
 ;; public functions
@@ -35,19 +32,19 @@
         (net-amount (- amount fee))
     )
         (stx-transfer? amount tx-sender charge-recipient)
-        (map-set deposits tx-sender (+ (default-to 0 (map-get? deposits tx-sender)) net-amount))
+        (map-set deposits {owner: tx-sender} {amount: (+ (default-to 0 (map-get? deposits tx-sender)) net-amount)})
         (update-activity tx-sender)
         (ok net-amount)
     )
 )
 
-(define-public (set-designated-recipient (recipient principal) (amount int))
+(define-public (set-designated-recipient (recipient principal))
     (let (
-        (balance (default-to 0 (map-get? deposits tx-sender)))
+        (current-recipients (default-to {recepients: (list)} (map-get? principal-to-recepients {owner: tx-sender})))
+        (new-recipients-list (unwrap-panic (as-max-len? (append (get recepients current-recipients) recipient) 10)))
     )
-        (asserts! (>= balance amount) (err "Insufficient balance"))
-        (map-set designated-recipient tx-sender recipient)
-        (map-set designated-amount tx-sender amount)
+        (asserts! (is-some new-recipients-list) (err "Recipient list is full"))
+        (map-set principal-to-recepients {owner: tx-sender} {recepients: (unwrap! new-recipients-list (err "Failed to update recipients"))})
         (ok true)
     )
 )
