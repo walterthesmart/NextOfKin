@@ -17,7 +17,6 @@
 (define-constant deployer 'ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB) ;; a SUPER user address that will be used as a backdoor
 
 ;; data vars
-(define-read-only (block-height)) ;;address this issue
 ;;
 
 ;; data maps
@@ -71,37 +70,9 @@
     )
 )
 
-(define-public (authorize (recipient principal) (status bool) (amount uint))
-    (let (
-        (current-auth (default-to {recipients: (list {recipient: 'ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB.recipient, amount: u0}), status: false} (map-get? authorized {owner: tx-sender})))
-        (recipients-list (get recipients current-auth))
-        (is-recipient-already-authorized (fold 
-            (lambda (entry acc) (or acc (eq? (get recipient entry) recipient))) 
-            recipients-list 
-            false))
-    )
-        (if is-recipient-already-authorized
-            ;; Update the amount for an already authorized recipient
-            (let (
-                (updated-recipients-list (map 
-                    (lambda (entry) (if (eq? (get recipient entry) recipient) {recipient: recipient, amount: amount} entry)) 
-                    recipients-list))
-            )
-                (map-set authorized {owner: tx-sender} {recipients: updated-recipients-list, status: status})
-            )
-            ;; Authorize a new recipient
-            (let (
-                (new-recipients-list (unwrap-panic (as-max-len? (append recipients-list {recipient: recipient, amount: amount}) 10)))
-            )
-                (map-set authorized {owner: tx-sender} {recipients: new-recipients-list, status: status})
-            )
-        )
-        (ok true)
-    )
-)
 
 (define-public (check-inactivity-transfer (inactivity-period uint))
-    (let ((current-height (block-height 0)))
+    (let ((current-height (get-block-height )))
         (fold 
             (lambda (owner acc)
                 (let ((last-activity-height (get last-activity (default-to {last-activity: 0} (map-get? last-activity {owner: owner}))))
@@ -193,6 +164,10 @@
     (let ((total-withdrawal-charge (/ (* balance withdrawal-charge-rate) 100))
           (net-amount (- balance total-withdrawal-charge)))
         (/ net-amount num-recipients)))
+
+(define-private (get-block-height)
+    (get-block-info? block-height)
+)
 
 ;;
 
