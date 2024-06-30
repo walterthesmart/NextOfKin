@@ -32,10 +32,10 @@ The Next of Kin smart contract is built on the Stacks blockchain using the Clari
 
 3. **Deposit STX and Assign Recipients**:
     - Call the `deposit-stx` function to deposit your STX tokens.
-    - Call the `assign-recipients` function to specify up to 10 recipients and their respective amounts.
+    - Call the `set-designated-recipient` function to specify up to 10 recipients and their respective amounts.
 
 4. **Monitor Activity**:
-    - The smart contract will automatically monitor your activity.
+    - The smart contract will automatically monitor your wallet activity.
     - If no activity is detected for one year, the contract will trigger the distribution of STX to your assigned recipients.
 
 ## Contributing
@@ -50,8 +50,7 @@ We welcome contributions! If you would like to contribute to this project, pleas
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
+This project is licensed under the MIT License.
 ## Acknowledgements
 
 - [Stacks Blockchain](https://stacks.co/) for providing the blockchain infrastructure.
