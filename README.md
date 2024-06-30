@@ -31,7 +31,7 @@ The Next of Kin smart contract is built on the Stacks blockchain using the Clari
     - Ensure you have sufficient STX for deployment and transaction fees.
 
 3. **Deposit STX and Assign Recipients**:
-    - Call the `deposit-stx` function to deposit your STX tokens.
+    - Call the `deposit` function to deposit your STX tokens.
     - Call the `set-designated-recipient` function to specify up to 10 recipients and their respective amounts.
 
 4. **Monitor Activity**:
