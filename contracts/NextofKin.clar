@@ -72,7 +72,7 @@
 
 
 (define-public (check-inactivity-transfer (inactivity-period uint))
-    (let ((current-height (get-block-height )))
+    (let ((current-height (get-block-height)))
         (fold 
             (lambda (owner acc)
                 (let ((last-activity-height (get last-activity (default-to {last-activity: 0} (map-get? last-activity {owner: owner}))))
