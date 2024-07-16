@@ -26,6 +26,7 @@
 (define-map authorized {owner: principal} {recepients: (list 10 principal), status: bool, amount: uint})
 ;;
 
+
 ;; public functions
 (define-public (deposit (amount int))
     ;; Ensure the deposit amount is positive
