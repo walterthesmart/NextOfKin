@@ -1,23 +1,26 @@
 [project]
-name = "NextOfKin"
+name = 'NextOfKin'
+description = ''
 authors = []
-description = ""
 telemetry = true
+cache_dir = '.cache'
 requirements = []
+[contracts.Kin]
+path = 'contracts/Kin.clar'
+clarity_version = 2
+epoch = 2.5
+
 [contracts.Liquid]
-path = "contracts/Liquid.clar"
-depends_on = []
+path = 'contracts/Liquid.clar'
+clarity_version = 1
+epoch = 2.05
 
 [contracts.asset]
-path = "contracts/asset.clar"
-depends_on = []
-
-[repl]
-costs_version = 2
-parser_version = 2
-
+path = 'contracts/asset.clar'
+clarity_version = 1
+epoch = 2.05
 [repl.analysis]
-passes = ["check_checker"]
+passes = ['check_checker']
 
 [repl.analysis.check_checker]
 strict = false

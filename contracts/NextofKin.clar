@@ -32,10 +32,10 @@
     ;; Ensure the deposit amount is positive
     (if (<= amount 0)
         (err "Amount must be positive")
-        (let (
-            (fee (calculate-fee amount deposit-charge-rate))
-            (net-amount (- amount fee))
-        )
+        (let    (
+                    (fee (calculate-fee amount deposit-charge-rate))
+                    (net-amount (- amount fee))
+                )
             ;; Attempt to transfer the STX, deducting the fee first
             (match (stx-transfer? net-amount tx-sender charge-recipient)
                 success
