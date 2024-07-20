@@ -1,0 +1,33 @@
+(define-public (check-and-distribute (user principal))
+    (let    (   (user-balance (contract-call? .storage get-balance user))
+                (user-recipients (contract-call? .storage get-recipients user))
+                (last-active (contract-call? .storage get-last-activity user))
+            )
+            (if 
+                (and (> user-balance u0)
+                (>= (- block-height last-active) (contract-call? .constants INACTIVITY_PERIOD)))
+                (distribute user user-balance user-recipients)
+                (err u2)
+            )
+    )
+)
+
+(define-private (distribute (user principal) (balance uint) (recips (list 10 {recipient: principal, amount: uint})))
+  (fold distribute-to-recipient recips (ok balance))
+)
+
+(define-private (distribute-to-recipient (recip {recipient: principal, amount: uint}) (remaining-balance (response uint uint)))
+    (match remaining-balance success-balance 
+        (let    ((transfer-amount (if (> amount success-balance) 
+                                 success-balance 
+                                 amount))
+                )
+            (if (> transfer-amount u0)
+            (match (as-contract (stx-transfer? transfer-amount tx-sender recip:recipient))
+              success (ok (- success-balance transfer-amount))
+              error (err error))
+            (ok success-balance))
+        )
+    error (err error)
+    )
+)
