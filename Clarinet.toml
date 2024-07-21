@@ -5,25 +5,6 @@ authors = []
 telemetry = true
 cache_dir = '.cache'
 requirements = []
-[contracts.Kin]
-path = 'contracts/Kin.clar'
-clarity_version = 2
-epoch = 2.5
-
-[contracts.Liquid]
-path = 'contracts/Liquid.clar'
-clarity_version = 1
-epoch = 2.05
-
-[contracts.asset]
-path = 'contracts/asset.clar'
-clarity_version = 1
-epoch = 2.05
-
-[contracts.constants]
-path = 'contracts/constants.clar'
-clarity_version = 2
-epoch = 2.5
 
 [contracts.core]
 path = 'contracts/core.clar'
