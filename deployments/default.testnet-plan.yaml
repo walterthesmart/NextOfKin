@@ -1,0 +1,46 @@
+---
+id: 0
+name: Testnet deployment
+network: testnet
+stacks-node: "https://api.nakamoto.testnet.hiro.so"
+bitcoin-node: "http://blockstack:blockstacksystem@bitcoind.testnet.stacks.co:18332"
+plan:
+  batches:
+    - id: 0
+      transactions:
+        - contract-publish:
+            contract-name: storage
+            expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
+            cost: 1373919
+            path: "contracts\\storage.clar"
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: core
+            expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
+            cost: 1373694
+            path: "contracts\\core.clar"
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: distrubution
+            expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
+            cost: 1374032
+            path: "contracts\\distrubution.clar"
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: main
+            expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
+            cost: 1374032
+            path: "contracts\\main.clar"
+            anchor-block-only: true
+            clarity-version: 2
+        - contract-publish:
+            contract-name: nok-trait
+            expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
+            cost: 1373469
+            path: "contracts\\nok-trait.clar"
+            anchor-block-only: true
+            clarity-version: 2
+      epoch: "2.5"
