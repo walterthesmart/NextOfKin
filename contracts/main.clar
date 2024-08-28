@@ -10,17 +10,6 @@
 (contract-call? .core)
 (contract-call? .distribution)
 
-;; token definitions
-;;
-
-;; constants
-;;
-
-;; data vars
-;;
-
-;; data maps
-;;
 
 ;; Public Functions
 (define-public (deposit (amount uint))
