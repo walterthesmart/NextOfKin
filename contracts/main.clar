@@ -7,9 +7,6 @@
 (use-trait sip-010-trait .sip-010-trait.sip-010-trait)
 (impl-trait .nok-trait.nok-trait)
 (contract-call? .storage)
-
-
-
 ;; Public Functions
 (define-public (deposit (amount uint))
   (contract-call? .core deposit amount))
