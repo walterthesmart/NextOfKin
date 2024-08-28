@@ -1,11 +1,10 @@
 ;; title: NextofKin
 ;; version:
 ;; summary:
-;; description: A contract that provides a way to designate a recipient for your funds in case of inactivity.
+;;  Description: A contract that provides a way to designate a recipient for your funds in case of inactivity.
 
 ;; traits
 (use-trait sip-010-trait .sip-010-trait.sip-010-trait)
-(impl-trait .nok-trait.nok-trait)
 
 ;; Public Functions
 (define-public (deposit (amount uint))
