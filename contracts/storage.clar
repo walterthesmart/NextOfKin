@@ -12,7 +12,8 @@
 )
 
 (define-read-only (get-recipients (user principal))
-  (default-to (list) (map-get? recipients user))
+  (default-to (list) (map-get? recipients user)
+  )
 )
 
 (define-read-only (get-last-activity (user principal))
