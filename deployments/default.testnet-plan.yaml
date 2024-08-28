@@ -11,35 +11,35 @@ plan:
         - contract-publish:
             contract-name: storage
             expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
-            cost: 1373919
+            cost: 111309
             path: "contracts\\storage.clar"
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: core
             expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
-            cost: 1373694
+            cost: 111291
             path: "contracts\\core.clar"
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: distrubution
             expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
-            cost: 1374032
+            cost: 111318
             path: "contracts\\distrubution.clar"
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: main
             expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
-            cost: 1374032
+            cost: 111309
             path: "contracts\\main.clar"
             anchor-block-only: true
             clarity-version: 2
         - contract-publish:
             contract-name: nok-trait
             expected-sender: ST31AT1T96E4CF8C2QZ7FCFC99WJCTV2GTTN3ZQKB
-            cost: 1373469
+            cost: 111272
             path: "contracts\\nok-trait.clar"
             anchor-block-only: true
             clarity-version: 2
