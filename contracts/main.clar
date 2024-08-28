@@ -8,9 +8,6 @@
 (define-public (assign-recipients (new-recipients (list 10 {recipient: principal, amount: uint})))
   (contract-call? .core assign-recipients new-recipients))
 
-(define-public (check-and-distribute (user principal))
-  (contract-call? .distribution check-and-distribute user))
-
 ;; Read-only Functions
 (define-read-only (get-balance (user principal))
   (contract-call? .storage get-balance user))
