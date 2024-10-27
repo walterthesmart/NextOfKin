@@ -1,41 +1,34 @@
-
-
-  function handleSubmit() {
-    showConnect({
-      appDetails: {
-        name: "My App",
-        icon: "",
-      },
-      onFinish: function () {
-        let {
-          profile: {
-            stxAddress: { testnet },
-          },
-        } = userSession.loadUserData();
-
-        console.log(userSession.loadUserData());
-
-        setUserAddress(testnet);
-        sessionStorage.clear();
-        sessionStorage.setItem("userAddress", JSON.stringify(testnet));
-      },
-      userSession,
-    });
-  }
-
-  return (
-    <main>
-      <nav className="bg-yellow-800 py-[2rem] p-[4rem] flex items-center justify-between">
-        <h1 className="text-white text-[2rem]">NextOfKin UI</h1>
-        <button
-          className="bg-black px-[2rem] py-[.5rem] text-white text-[1.6rem] rounded-[.5rem]"
-          onClick={handleSubmit}
-        >
-          {!userAddress ? "Connect Wallet" : "Wallet Connected"}
-        </button>
-      </nav>
-    </main>
-  );
-}
-
-export default App;
+import React, { useState, useEffect } from 'react';
+import { AppConfig, showConnect, UserSession } from "@stacks/connect";
+import { 
+  UserCircle, 
+  Wallet, 
+  Users, 
+  History,
+  Settings,
+  LogOut,
+  Plus,
+  Trash2
+} from 'lucide-react';
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent 
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
