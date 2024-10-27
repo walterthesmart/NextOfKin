@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
-import { 
-  UserCircle, 
-  Wallet, 
-  Users, 
+import {
+  UserCircle,
+  Wallet,
+  Users,
   History,
   Settings,
   LogOut,
   Plus,
   Trash2
 } from 'lucide-react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription, 
-  CardContent 
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +36,7 @@ import {
 const App = () => {
   const appConfig = new AppConfig(["store_write", "publish_data"]);
   const userSession = new UserSession({ appConfig });
-  
+
   // State management
   const [userAddress, setUserAddress] = useState(() => {
     return JSON.parse(sessionStorage.getItem("userAddress"));
@@ -61,7 +61,7 @@ const App = () => {
       onFinish: () => {
         const userData = userSession.loadUserData();
         const testnetAddress = userData.profile.stxAddress.testnet;
-        
+
         setUserAddress(testnetAddress);
         sessionStorage.setItem("userAddress", JSON.stringify(testnetAddress));
         // Here you would typically fetch user's assets and beneficiaries
@@ -85,16 +85,16 @@ const App = () => {
         { name: 'Bored Ape #456', id: '456' }
       ]
     });
-    
+
     setBeneficiaries([
-      { 
-        address: 'ST1234...ABCD', 
+      {
+        address: 'ST1234...ABCD',
         percentage: 60,
         name: 'Alice',
         relationship: 'Sister'
       },
-      { 
-        address: 'ST5678...EFGH', 
+      {
+        address: 'ST5678...EFGH',
         percentage: 40,
         name: 'Bob',
         relationship: 'Brother'
@@ -148,7 +148,7 @@ const App = () => {
       <nav className="bg-yellow-800 py-4 px-6 flex items-center justify-between">
         <h1 className="text-white text-2xl font-bold">NextOfKin DApp</h1>
         {!userAddress ? (
-          <Button 
+          <Button
             onClick={handleConnect}
             className="bg-black hover:bg-gray-800"
           >
@@ -160,8 +160,8 @@ const App = () => {
             <span className="text-white">
               {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
             </span>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleDisconnect}
               className="bg-red-600 hover:bg-red-700 text-white"
             >
@@ -219,7 +219,7 @@ const App = () => {
             {activeTab === 'dashboard' && (
               <div className="space-y-6">
                 <h2 className="text-2xl font-bold">Dashboard</h2>
-                
+
                 {/* Asset Overview */}
                 <Card>
                   <CardHeader>
@@ -292,7 +292,7 @@ const App = () => {
                           <label>Percentage</label>
                           <Input type="number" placeholder="Enter percentage" min="0" max="100" />
                         </div>
-                        <Button 
+                        <Button
                           className="w-full"
                           onClick={() => handleAddBeneficiary({
                             address: 'ST90123...WXYZ',
@@ -320,7 +320,7 @@ const App = () => {
                           </div>
                           <div className="flex items-center space-x-4">
                             <span className="text-lg font-bold">{beneficiary.percentage}%</span>
-                            <Button 
+                            <Button
                               variant="destructive"
                               size="sm"
                               onClick={() => handleRemoveBeneficiary(beneficiary.address)}
@@ -359,9 +359,8 @@ const App = () => {
                               <p className="text-sm text-gray-500">{tx.address}</p>
                               <p className="text-sm text-gray-500">{tx.timestamp}</p>
                             </div>
-                            <span className={`px-2 py-1 rounded text-sm ${
-                              tx.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                            }`}>
+                            <span className={`px-2 py-1 rounded text-sm ${tx.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                              }`}>
                               {tx.status}
                             </span>
                           </div>
