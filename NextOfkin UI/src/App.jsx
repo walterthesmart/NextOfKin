@@ -77,8 +77,8 @@ const App = () => {
     setAssets({
       stx: '1000.00',
       fungibleTokens: [
-        { name: 'USDA', balance: '500.00' },
-        { name: 'XUSD', balance: '750.00' }
+        { name: 'STX', balance: '500.00' },
+        { name: 'BTC', balance: '750.00' }
       ],
       nfts: [
         { name: 'CryptoPunk #123', id: '123' },
