@@ -1,12 +1,4 @@
-import { AppConfig, showConnect, UserSession } from "@stacks/connect";
-import { useState } from "react";
 
-function App() {
-  const appConfig = new AppConfig(["store_write", "publish_data"]);
-  const userSession = new UserSession({ appConfig });
-  const [userAddress, setUserAddress] = useState(function () {
-    return JSON.parse(sessionStorage.getItem("userAddress"));
-  });
 
   function handleSubmit() {
     showConnect({
