@@ -90,8 +90,8 @@ const App = () => {
       {
         address: 'ST1234...ABCD',
         percentage: 60,
-        name: 'Alice',
-        relationship: 'Sister'
+        name: 'Walter',
+        relationship: 'Brother'
       },
       {
         address: 'ST5678...EFGH',
