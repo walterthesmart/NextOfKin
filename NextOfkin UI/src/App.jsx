@@ -17,6 +17,11 @@ import {
   Shield,
   Coins,
   Gift,
+  Clock,
+  ArrowUp,
+  ArrowDown,
+  CheckCircle2,
+  RefreshCw
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -44,6 +49,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function App() {
   const appConfig = new AppConfig(["store_write", "publish_data"])
@@ -65,6 +73,7 @@ export default function App() {
     nfts: [],
   })
   const [transactions, setTransactions] = useState([])
+  const [pulseAnimation, setPulseAnimation] = useState(false)
 
   // Inactivity monitoring states
   const [lastActiveTimestamp, setLastActiveTimestamp] = useState(() => {
@@ -91,6 +100,10 @@ export default function App() {
         sessionStorage.setItem("userAddress", JSON.stringify(testnetAddress))
         sessionStorage.setItem("lastActiveTimestamp", Date.now().toString())
         fetchUserData(testnetAddress)
+        
+        // Trigger success animation
+        setPulseAnimation(true)
+        setTimeout(() => setPulseAnimation(false), 2000)
       },
       userSession,
     })
@@ -159,339 +172,399 @@ export default function App() {
       case "dashboard":
         return (
           <div className="space-y-8">
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 p-8 text-white shadow-lg">
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <h1 className="mb-2 text-3xl font-bold">Welcome to Next of Kin</h1>
-              <p className="mb-4 max-w-lg text-white/80">
-                Secure your digital legacy with our blockchain-powered inheritance solution.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
-                  Stacks Blockchain
-                </Badge>
-                <Badge variant="outline" className="border-white/20 bg-white/10 text-white">
-                  Secure Inheritance
-                </Badge>
-              </div>
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 p-8 text-white shadow-xl">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h1 className="mb-2 text-4xl font-extrabold tracking-tight">Welcome to Next of Kin</h1>
+                <p className="mb-6 max-w-lg text-white/90 text-lg">
+                  Secure your digital legacy with our blockchain-powered inheritance solution.
+                </p>
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="border-white/20 bg-white/20 backdrop-blur-sm text-white px-4 py-1 text-sm">
+                    <Sparkles className="h-3.5 w-3.5 mr-1" /> Stacks Blockchain
+                  </Badge>
+                  <Badge variant="outline" className="border-white/20 bg-white/20 backdrop-blur-sm text-white px-4 py-1 text-sm">
+                    <Shield className="h-3.5 w-3.5 mr-1" /> Secure Inheritance
+                  </Badge>
+                </div>
+              </motion.div>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="overflow-hidden border-none bg-gradient-to-br from-violet-50 to-violet-100 shadow-md dark:from-violet-950/30 dark:to-violet-900/30">
-                <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-500 pb-8 pt-6 text-white">
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="h-5 w-5" />
-                    STX Balance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
-                  <div className="flex items-end justify-between">
-                    <div className="text-3xl font-bold">{assets.stx}</div>
-                    <div className="text-sm text-muted-foreground">STX</div>
-                  </div>
-                  <Progress
-                    value={65}
-                    className="mt-4 h-2 bg-violet-100 dark:bg-violet-900/30"
-                    indicatorClassName="bg-violet-500"
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="overflow-hidden border-none bg-gradient-to-br from-pink-50 to-pink-100 shadow-md dark:from-pink-950/30 dark:to-pink-900/30">
-                <CardHeader className="bg-gradient-to-r from-pink-500 to-rose-500 pb-8 pt-6 text-white">
-                  <CardTitle className="flex items-center gap-2">
-                    <Coins className="h-5 w-5" />
-                    Tokens
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
-                  <div className="space-y-3">
-                    {assets.fungibleTokens.map((token, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded-full" style={{ backgroundColor: token.color }}></div>
-                          <span>{token.name}</span>
-                        </div>
-                        <span className="font-medium">{token.balance}</span>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <Card className="overflow-hidden border-none bg-gradient-to-br from-violet-50 to-violet-100 shadow-lg hover:shadow-xl transition-all dark:from-violet-950/40 dark:to-violet-900/40 group">
+                  <CardHeader className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 pb-8 pt-6 text-white">
+                    <CardTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      STX Balance
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <div className="flex items-end justify-between">
+                        <div className="text-4xl font-extrabold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">{assets.stx}</div>
+                        <div className="text-sm font-medium text-muted-foreground">STX</div>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <Progress
+                        value={65}
+                        className="mt-4 h-2 bg-violet-100 dark:bg-violet-900/30"
+                        indicatorClassName="bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                      />
+                    </motion.div>
+                  </CardContent>
+                </Card>
 
-              <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-blue-100 shadow-md dark:from-blue-950/30 dark:to-blue-900/30">
-                <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-500 pb-8 pt-6 text-white">
-                  <CardTitle className="flex items-center gap-2">
-                    <Gift className="h-5 w-5" />
-                    NFTs
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
-                  <div className="grid grid-cols-2 gap-3">
-                    {assets.nfts.map((nft, index) => (
-                      <div key={index} className="overflow-hidden rounded-lg border bg-background p-2">
-                        <img
-                          src={nft.image || "/placeholder.svg"}
-                          alt={nft.name}
-                          className="mb-2 aspect-square w-full rounded-md object-cover"
-                        />
-                        <p className="text-center text-sm font-medium">{nft.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-md dark:from-slate-950/30 dark:to-slate-900/30">
-              <CardHeader className="border-b">
-                <CardTitle>Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="h-[200px]">
-                  {transactions.slice(0, 3).map((tx, index) => (
-                    <div key={index} className="flex items-center justify-between border-b p-4 last:border-0">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-10 w-10 items-center justify-center rounded-full ${tx.type === "send" ? "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"}`}
+                <Card className="overflow-hidden border-none bg-gradient-to-br from-pink-50 to-pink-100 shadow-lg hover:shadow-xl transition-all dark:from-pink-950/40 dark:to-pink-900/40 group">
+                  <CardHeader className="bg-gradient-to-r from-pink-500 via-rose-500 to-red-500 pb-8 pt-6 text-white">
+                    <CardTitle className="flex items-center gap-2">
+                      <Coins className="h-5 w-5" />
+                      Tokens
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
+                    <div className="space-y-3">
+                      {assets.fungibleTokens.map((token, index) => (
+                        <motion.div 
+                          key={index} 
+                          className="flex items-center justify-between p-3 rounded-lg hover:bg-pink-100/50 dark:hover:bg-pink-900/20 transition-colors"
+                          whileHover={{ x: 5 }}
                         >
-                          {tx.type === "send" ? "↑" : "↓"}
-                        </div>
-                        <div>
-                          <p className="font-semibold">
-                            {tx.type === "send" ? "Sent" : "Received"} {tx.amount}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {tx.type === "send" ? `To: ${tx.recipient}` : `From: ${tx.sender}`}
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{tx.date}</p>
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-full flex items-center justify-center" style={{ backgroundColor: token.color }}>
+                              <Coins className="h-4 w-4 text-white" />
+                            </div>
+                            <span className="font-medium">{token.name}</span>
+                          </div>
+                          <span className="font-bold text-lg">{token.balance}</span>
+                        </motion.div>
+                      ))}
                     </div>
-                  ))}
-                </ScrollArea>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+
+                <Card className="overflow-hidden border-none bg-gradient-to-br from-blue-50 to-cyan-100 shadow-lg hover:shadow-xl transition-all dark:from-blue-950/40 dark:to-cyan-900/40 group">
+                  <CardHeader className="bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 pb-8 pt-6 text-white">
+                    <CardTitle className="flex items-center gap-2">
+                      <Gift className="h-5 w-5" />
+                      NFTs
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="-mt-6 rounded-t-xl bg-card px-6 py-4">
+                    <div className="grid grid-cols-2 gap-3">
+                      {assets.nfts.map((nft, index) => (
+                        <motion.div 
+                          key={index} 
+                          className="overflow-hidden rounded-lg border bg-background p-2 hover:border-blue-300 dark:hover:border-blue-500 transition-all"
+                          whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.3)" }}
+                        >
+                          <img
+                            src={nft.image || "/placeholder.svg"}
+                            alt={nft.name}
+                            className="mb-2 aspect-square w-full rounded-md object-cover"
+                          />
+                          <p className="text-center text-sm font-medium">{nft.name}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                <CardHeader className="border-b">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-bold">Recent Activity</CardTitle>
+                    <Button variant="ghost" size="sm" className="gap-1.5 text-xs">
+                      <RefreshCw className="h-3.5 w-3.5" />
+                      Refresh
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ScrollArea className="h-[250px]">
+                    {transactions.slice(0, 3).map((tx, index) => (
+                      <motion.div 
+                        key={index} 
+                        className="flex items-center justify-between border-b p-4 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                        whileHover={{ backgroundColor: "rgba(241, 245, 249, 0.5)" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                              tx.type === "send" 
+                                ? "bg-gradient-to-r from-rose-500 to-red-500 text-white" 
+                                : "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
+                            }`}
+                          >
+                            {tx.type === "send" ? <ArrowUp className="h-5 w-5" /> : <ArrowDown className="h-5 w-5" />}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-base">
+                              {tx.type === "send" ? "Sent" : "Received"} {tx.amount}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {tx.type === "send" ? `To: ${tx.recipient}` : `From: ${tx.sender}`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <p className="text-sm text-muted-foreground">{tx.date}</p>
+                          <Badge variant="outline" className="mt-1">
+                            {index % 2 === 0 ? 
+                              <><CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" /> Confirmed</> : 
+                              <><Clock className="h-3 w-3 mr-1 text-amber-500" /> Pending</>
+                            }
+                          </Badge>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </ScrollArea>
+                </CardContent>
+                <CardFooter className="border-t p-4">
+                  <Button variant="outline" className="w-full" onClick={() => setActiveTab("transactions")}>
+                    View All Transactions
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
           </div>
         )
       case "beneficiaries":
         return (
           <div className="space-y-8">
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-600 to-purple-500 p-8 text-white shadow-lg">
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <h1 className="mb-2 text-3xl font-bold">Beneficiaries</h1>
-              <p className="mb-4 max-w-lg text-white/80">Manage who will inherit your digital assets.</p>
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-600 p-8 text-white shadow-xl">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h1 className="mb-2 text-4xl font-extrabold tracking-tight">Beneficiaries</h1>
+                <p className="mb-6 max-w-lg text-white/90 text-lg">
+                  Manage who will inherit your digital assets and set distribution rules.
+                </p>
+              </motion.div>
             </div>
 
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-md dark:from-slate-950/30 dark:to-slate-900/30">
-              <CardHeader className="border-b">
-                <CardTitle>Your Beneficiaries</CardTitle>
-                <CardDescription>Manage your beneficiaries here</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  {beneficiaries.map((beneficiary, index) => (
-                    <div
-                      key={index}
-                      className="group relative overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
-                    >
-                      <div
-                        className="absolute -right-4 -top-4 h-16 w-16 rounded-full opacity-20"
-                        style={{ backgroundColor: beneficiary.color }}
-                      ></div>
-                      <div className="relative z-10 flex items-start justify-between">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="h-8 w-8 rounded-full" style={{ backgroundColor: beneficiary.color }}></div>
-                            <h3 className="text-xl font-semibold">{beneficiary.name}</h3>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{beneficiary.address}</p>
-                          <Badge variant="outline" className="mt-2">
-                            Share: {beneficiary.share}
-                          </Badge>
-                        </div>
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="opacity-0 transition-opacity group-hover:opacity-100"
-                          onClick={() => handleRemoveBeneficiary(beneficiary.address)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                <CardHeader className="border-b">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl font-bold">Your Beneficiaries</CardTitle>
+                      <CardDescription>Manage your beneficiaries and their allocation percentages</CardDescription>
                     </div>
-                  ))}
-
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <div
-                        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed bg-muted/50 p-6 text-muted-foreground transition-colors hover:bg-muted"
-                        onClick={() => setIsAddingBeneficiary(true)}
-                      >
-                        <div className="mb-2 rounded-full bg-primary/10 p-2">
-                          <Plus className="h-6 w-6 text-primary" />
-                        </div>
-                        <p>Add New Beneficiary</p>
-                      </div>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Add New Beneficiary</DialogTitle>
-                        <DialogDescription>Enter the details of the new beneficiary.</DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="space-y-2">
-                          <label htmlFor="name" className="text-sm font-medium">
-                            Name
-                          </label>
-                          <Input id="name" placeholder="Name" />
-                        </div>
-                        <div className="space-y-2">
-                          <label htmlFor="address" className="text-sm font-medium">
-                            Stacks Address
-                          </label>
-                          <Input id="address" placeholder="Stacks Address" />
-                        </div>
-                        <div className="space-y-2">
-                          <label htmlFor="share" className="text-sm font-medium">
-                            Share (%)
-                          </label>
-                          <Input id="share" placeholder="Share (%)" />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          onClick={() =>
-                            handleAddBeneficiary({
-                              name: "New Beneficiary",
-                              address: "ST...",
-                              share: "25%",
-                              color: "#10B981",
-                            })
-                          }
-                        >
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700">
+                          <Plus className="h-4 w-4 mr-2" />
                           Add Beneficiary
                         </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-50 to-amber-100 shadow-md dark:from-amber-950/30 dark:to-amber-900/30">
-              <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 pb-6 pt-6 text-white">
-                <CardTitle className="flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
-                  Inheritance Rules
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  <p className="text-sm">
-                    Your assets will be distributed to your beneficiaries if you remain inactive for{" "}
-                    {inactivityThreshold} days. Make sure to log in regularly to prevent automatic asset distribution.
-                  </p>
-                  <div className="rounded-lg bg-amber-100 p-4 dark:bg-amber-900/30">
-                    <h4 className="mb-2 font-semibold">Current Distribution</h4>
-                    <div className="space-y-2">
-                      {beneficiaries.map((beneficiary, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <span>{beneficiary.name}</span>
-                          <span>{beneficiary.share}</span>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Add New Beneficiary</DialogTitle>
+                          <DialogDescription>Enter the details of the new beneficiary.</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input id="name" placeholder="Name" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="address">Stacks Address</Label>
+                            <Input id="address" placeholder="Stacks Address" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="share">Share (%)</Label>
+                            <Input id="share" placeholder="Share (%)" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
                         </div>
-                      ))}
+                        <DialogFooter>
+                          <Button
+                            onClick={() =>
+                              handleAddBeneficiary({
+                                name: "New Beneficiary",
+                                address: "ST...",
+                                share: "25%",
+                                color: "#10B981",
+                              })
+                            }
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 w-full"
+                          >
+                            Add Beneficiary
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {beneficiaries.map((beneficiary, index) => (
+                      <motion.div
+                        key={index}
+                        whileHover={{ scale: 1.02 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        className="group relative overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+                      >
+                        <div
+                          className="absolute -right-4 -top-4 h-20 w-20 rounded-full opacity-20"
+                          style={{ backgroundColor: beneficiary.color }}
+                        ></div>
+                        <div className="relative z-10 flex items-start justify-between">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <div className="h-10 w-10 rounded-full flex items-center justify-center" style={{ backgroundColor: beneficiary.color }}>
+                                <span className="text-white font-bold">{beneficiary.name.slice(0, 1)}</span>
+                              </div>
+                              <h3 className="text-xl font-bold">{beneficiary.name}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground font-mono">{beneficiary.address}</p>
+                            <Badge variant="outline" className="mt-2 border-2" style={{ borderColor: `${beneficiary.color}30`, color: beneficiary.color }}>
+                              Share: {beneficiary.share}
+                            </Badge>
+                          </div>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  className="opacity-0 transition-opacity group-hover:opacity-100"
+                                  onClick={() => handleRemoveBeneficiary(beneficiary.address)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Remove Beneficiary</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      </motion.div>
+                    ))}
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed bg-muted/50 p-6 text-muted-foreground transition-colors hover:bg-muted"
+                          onClick={() => setIsAddingBeneficiary(true)}
+                        >
+                          <div className="mb-2 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 p-2 text-white">
+                            <Plus className="h-6 w-6" />
+                          </div>
+                          <p className="font-medium">Add New Beneficiary</p>
+                        </motion.div>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>Add New Beneficiary</DialogTitle>
+                          <DialogDescription>Enter the details of the new beneficiary.</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="name2">Name</Label>
+                            <Input id="name2" placeholder="Name" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="address2">Stacks Address</Label>
+                            <Input id="address2" placeholder="Stacks Address" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="share2">Share (%)</Label>
+                            <Input id="share2" placeholder="Share (%)" className="border-indigo-200 focus-visible:ring-indigo-500" />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            onClick={() =>
+                              handleAddBeneficiary({
+                                name: "New Beneficiary",
+                                address: "ST...",
+                                share: "25%",
+                                color: "#10B981",
+                              })
+                            }
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 w-full"
+                          >
+                            Add Beneficiary
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="overflow-hidden border-none bg-gradient-to-br from-amber-50 to-amber-100 shadow-lg dark:from-amber-950/40 dark:to-amber-900/40">
+                <CardHeader className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 pb-6 pt-6 text-white">
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5" />
+                    Inheritance Rules
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <p>
+                      Your assets will be distributed to your beneficiaries if you remain inactive for{" "}
+                      <span className="font-bold text-amber-700 dark:text-amber-400">{inactivityThreshold} days</span>. Make sure to log in regularly to prevent automatic asset distribution.
+                    </p>
+                    <div className="rounded-lg bg-gradient-to-r from-amber-100/80 to-amber-50/80 p-4 dark:from-amber-900/50 dark:to-amber-800/30 border border-amber-200 dark:border-amber-700/50">
+                      <h4 className="mb-3 font-bold text-amber-800 dark:text-amber-300 flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-2" />
+                        Current Distribution Plan
+                      </h4>
+                      <div className="space-y-3">
+                        {beneficiaries.map((beneficiary, index) => (
+                          <div key={index} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="h-6 w-6 rounded-full" style={{ backgroundColor: beneficiary.color }}></div>
+                              <span className="font-medium">{beneficiary.name}</span>
+                            </div>
+                            <span className="font-bold" style={{ color: beneficiary.color }}>
+                              {beneficiary.share}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )
-      case "transactions":
-        return (
-          <div className="space-y-8">
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-cyan-600 to-blue-500 p-8 text-white shadow-lg">
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <h1 className="mb-2 text-3xl font-bold">Transaction History</h1>
-              <p className="mb-4 max-w-lg text-white/80">View all your blockchain transactions.</p>
-            </div>
-
-            <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-md dark:from-slate-950/30 dark:to-slate-900/30">
-              <CardHeader className="border-b">
-                <CardTitle>Recent Transactions</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <ScrollArea className="h-[400px]">
-                  {transactions.map((tx, index) => (
-                    <div key={index} className="flex items-center justify-between border-b p-6 last:border-0">
-                      <div className="flex items-center gap-4">
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-full ${tx.type === "send" ? "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400" : "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"}`}
-                        >
-                          {tx.type === "send" ? "↑" : "↓"}
-                        </div>
-                        <div>
-                          <p className="text-lg font-semibold">
-                            {tx.type === "send" ? "Sent" : "Received"} {tx.amount}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {tx.type === "send" ? `To: ${tx.recipient}` : `From: ${tx.sender}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{tx.date}</p>
-                        <p className="text-sm text-muted-foreground">{index % 2 === 0 ? "Confirmed" : "Pending"}</p>
-                      </div>
-                    </div>
-                  ))}
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-        )
-      case "settings":
-        return (
-          <div className="space-y-8">
-            <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-600 to-teal-500 p-8 text-white shadow-lg">
-              <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl"></div>
-              <h1 className="mb-2 text-3xl font-bold">Settings</h1>
-              <p className="mb-4 max-w-lg text-white/80">Configure your inheritance protocol settings.</p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-md dark:from-slate-950/30 dark:to-slate-900/30">
-                <CardHeader>
-                  <CardTitle>Inactivity Settings</CardTitle>
-                  <CardDescription>Configure the inactivity threshold for inheritance protocol</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <label htmlFor="inactivityThreshold" className="text-sm font-medium">
-                        Inactivity Threshold (Days)
-                      </label>
-                      <div className="flex items-center gap-4">
-                        <Input
-                          id="inactivityThreshold"
-                          type="number"
-                          value={inactivityThreshold}
-                          onChange={(e) => setInactivityThreshold(Number(e.target.value))}
-                          className="max-w-[180px]"
-                        />
-                        <span className="text-sm text-muted-foreground">days</span>
-                      </div>
-                    </div>
-                    <div className="rounded-lg bg-muted p-4">
-                      <p className="text-sm">
-                        Set the number of days of inactivity before inheritance protocol is triggered. Current setting:{" "}
-                        <span className="font-semibold">{inactivityThreshold} days</span>
-                      </p>
-                    </div>
+                </CardContent>
+                <CardFooter className="border-t p-4 bg-amber-50/50 dark:bg-amber-900/20">
+                  <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-2 rounded-full bg-emerald-500"></div>
                       <p className="text-sm">
@@ -499,38 +572,358 @@ export default function App() {
                         <span className="font-medium">{new Date(lastActiveTimestamp).toLocaleDateString()}</span>
                       </p>
                     </div>
+                    <Button variant="outline" className="bg-white/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/30 hover:bg-amber-100/80 dark:hover:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+                      <Clock className="h-4 w-4 mr-2" /> Adjust Timing
+                    </Button>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button>Save Settings</Button>
                 </CardFooter>
               </Card>
+            </motion.div>
+          </div>
+        )
+      case "transactions":
+        return (
+          <div className="space-y-8">
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 p-8 text-white shadow-xl">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h1 className="mb-2 text-4xl font-extrabold tracking-tight">Transaction History</h1>
+                <p className="mb-6 max-w-lg text-white/90 text-lg">
+                  View all your blockchain transactions and activity history.
+                </p>
+              </motion.div>
+            </div>
 
-              <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-md dark:from-slate-950/30 dark:to-slate-900/30">
-                <CardHeader>
-                  <CardTitle>Security Settings</CardTitle>
-                  <CardDescription>Configure additional security options</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                      <div>
-                        <p className="font-medium">Two-Factor Authentication</p>
-                        <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Tabs defaultValue="all" className="w-full">
+                <TabsList className="w-full mb-6 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900/60 dark:to-slate-800/60 border border-slate-200 dark:border-slate-800 p-1 rounded-lg">
+                  <TabsTrigger value="all" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm rounded-md">All</TabsTrigger>
+                  <TabsTrigger value="sent" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm rounded-md">Sent</TabsTrigger>
+                  <TabsTrigger value="received" className="flex-1 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:shadow-sm rounded-md">Received</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="all">
+                  <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                    <CardHeader className="border-b">
+                      <CardTitle className="flex items-center justify-between">
+                        <span>All Transactions</span>
+                        <Badge variant="outline" className="px-4 py-1 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800/30 text-blue-600 dark:text-blue-400">
+                          {transactions.length} Transactions
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <ScrollArea className="h-[500px]">
+                        {transactions.map((tx, index) => (
+                          <motion.div 
+                            key={index} 
+                            className="flex items-center justify-between border-b p-6 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                            whileHover={{ backgroundColor: "rgba(241, 245, 249, 0.5)" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`flex h-14 w-14 items-center justify-center rounded-full ${
+                                  tx.type === "send" 
+                                    ? "bg-gradient-to-r from-rose-500 to-red-500 text-white" 
+                                    : "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
+                                }`}
+                              >
+                                {tx.type === "send" ? <ArrowUp className="h-6 w-6" /> : <ArrowDown className="h-6 w-6" />}
+                              </div>
+                              <div>
+                                <p className="text-lg font-bold">
+                                  {tx.type === "send" ? "Sent" : "Received"} {tx.amount}
+                                </p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  {tx.type === "send" ? `To: ${tx.recipient}` : `From: ${tx.sender}`}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium">{tx.date}</p>
+                              <Badge variant="outline" className="mt-1">
+                                {index % 2 === 0 ? 
+                                  <><CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" /> Confirmed</> : 
+                                  <><Clock className="h-3 w-3 mr-1 text-amber-500" /> Pending</>
+                                }
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="sent">
+                  <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                    <CardHeader className="border-b">
+                      <CardTitle className="flex items-center justify-between">
+                        <span>Sent Transactions</span>
+                        <Badge variant="outline" className="px-4 py-1 bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800/30 text-rose-600 dark:text-rose-400">
+                          {transactions.filter(tx => tx.type === "send").length} Transactions
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <ScrollArea className="h-[500px]">
+                        {transactions.filter(tx => tx.type === "send").map((tx, index) => (
+                          <motion.div 
+                            key={index} 
+                            className="flex items-center justify-between border-b p-6 last:border-0 hover:bg-rose-50/30 dark:hover:bg-rose-900/10 transition-colors"
+                            whileHover={{ backgroundColor: "rgba(254, 226, 226, 0.2)" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-red-500 text-white">
+                                <ArrowUp className="h-6 w-6" />
+                              </div>
+                              <div>
+                                <p className="text-lg font-bold">
+                                  Sent {tx.amount}
+                                </p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  To: {tx.recipient}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium">{tx.date}</p>
+                              <Badge variant="outline" className="mt-1">
+                                {index % 2 === 0 ? 
+                                  <><CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" /> Confirmed</> : 
+                                  <><Clock className="h-3 w-3 mr-1 text-amber-500" /> Pending</>
+                                }
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="received">
+                  <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                    <CardHeader className="border-b">
+                      <CardTitle className="flex items-center justify-between">
+                        <span>Received Transactions</span>
+                        <Badge variant="outline" className="px-4 py-1 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800/30 text-emerald-600 dark:text-emerald-400">
+                          {transactions.filter(tx => tx.type === "receive").length} Transactions
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                      <ScrollArea className="h-[500px]">
+                        {transactions.filter(tx => tx.type === "receive").map((tx, index) => (
+                          <motion.div 
+                            key={index} 
+                            className="flex items-center justify-between border-b p-6 last:border-0 hover:bg-emerald-50/30 dark:hover:bg-emerald-900/10 transition-colors"
+                            whileHover={{ backgroundColor: "rgba(220, 252, 231, 0.2)" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <div className="flex items-center gap-4">
+                              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+                                <ArrowDown className="h-6 w-6" />
+                              </div>
+                              <div>
+                                <p className="text-lg font-bold">
+                                  Received {tx.amount}
+                                </p>
+                                <p className="text-sm text-muted-foreground font-mono">
+                                  From: {tx.sender}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium">{tx.date}</p>
+                              <Badge variant="outline" className="mt-1">
+                                {index % 2 === 0 ? 
+                                  <><CheckCircle2 className="h-3 w-3 mr-1 text-emerald-500" /> Confirmed</> : 
+                                  <><Clock className="h-3 w-3 mr-1 text-amber-500" /> Pending</>
+                                }
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </ScrollArea>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </motion.div>
+          </div>
+        )
+      case "settings":
+        return (
+          <div className="space-y-8">
+            <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-8 text-white shadow-xl">
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h1 className="mb-2 text-4xl font-extrabold tracking-tight">Settings</h1>
+                <p className="mb-6 max-w-lg text-white/90 text-lg">
+                  Configure your inheritance protocol settings and security preferences.
+                </p>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                  <CardHeader className="border-b">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Clock className="h-5 w-5 text-emerald-500" />
+                      Inactivity Settings
+                    </CardTitle>
+                    <CardDescription>Configure the inactivity threshold for inheritance protocol</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="inactivityThreshold" className="text-sm font-medium">
+                          Inactivity Threshold (Days)
+                        </Label>
+                        <div className="flex items-center gap-4">
+                          <Input
+                            id="inactivityThreshold"
+                            type="number"
+                            value={inactivityThreshold}
+                            onChange={(e) => setInactivityThreshold(Number(e.target.value))}
+                            className="max-w-[180px] border-emerald-200 focus-visible:ring-emerald-500"
+                          />
+                          <span className="text-sm font-medium text-muted-foreground">days</span>
+                        </div>
                       </div>
-                      <Button variant="outline">Enable</Button>
+                      <div className="rounded-lg bg-gradient-to-r from-emerald-50 to-emerald-100/50 p-4 border border-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/10 dark:border-emerald-800/30">
+                        <p className="text-sm text-emerald-800 dark:text-emerald-300 flex items-start">
+                          <AlertTriangle className="h-4 w-4 mr-2 mt-0.5 text-emerald-500" />
+                          <span>
+                            Set the number of days of inactivity before inheritance protocol is triggered. Current setting:{" "}
+                            <span className="font-bold">{inactivityThreshold} days</span>
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
+                        <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+                        <p className="text-sm">
+                          Last activity:{" "}
+                          <span className="font-bold">{new Date(lastActiveTimestamp).toLocaleDateString()}</span>
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                      <div>
-                        <p className="font-medium">Email Notifications</p>
-                        <p className="text-sm text-muted-foreground">Get notified about important events</p>
-                      </div>
-                      <Button variant="outline">Configure</Button>
+                  </CardContent>
+                  <CardFooter className="border-t p-4 bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-900/40 dark:to-slate-800/40">
+                    <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700">
+                      Save Settings
+                    </Button>
+                  </CardFooter>
+                </Card>
+
+                <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                  <CardHeader className="border-b">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Shield className="h-5 w-5 text-indigo-500" />
+                      Security Settings
+                    </CardTitle>
+                    <CardDescription>Configure additional security options for your account</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <motion.div 
+                        className="flex items-center justify-between rounded-lg border border-indigo-100 dark:border-indigo-800/30 p-4 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all"
+                        whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(79, 70, 229, 0.1)" }}
+                      >
+                        <div>
+                          <p className="font-bold text-indigo-800 dark:text-indigo-300">Two-Factor Authentication</p>
+                          <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+                        </div>
+                        <Button variant="outline" className="border-indigo-200 dark:border-indigo-800/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+                          Enable
+                        </Button>
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="flex items-center justify-between rounded-lg border border-indigo-100 dark:border-indigo-800/30 p-4 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all"
+                        whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(79, 70, 229, 0.1)" }}
+                      >
+                        <div>
+                          <p className="font-bold text-indigo-800 dark:text-indigo-300">Email Notifications</p>
+                          <p className="text-sm text-muted-foreground">Get notified about important events and activity</p>
+                        </div>
+                        <Button variant="outline" className="border-indigo-200 dark:border-indigo-800/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+                          Configure
+                        </Button>
+                      </motion.div>
+                      
+                      <motion.div 
+                        className="flex items-center justify-between rounded-lg border border-indigo-100 dark:border-indigo-800/30 p-4 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20 transition-all"
+                        whileHover={{ scale: 1.01, boxShadow: "0 4px 12px rgba(79, 70, 229, 0.1)" }}
+                      >
+                        <div>
+                          <p className="font-bold text-indigo-800 dark:text-indigo-300">Recovery Options</p>
+                          <p className="text-sm text-muted-foreground">Configure backup methods for account recovery</p>
+                        </div>
+                        <Button variant="outline" className="border-indigo-200 dark:border-indigo-800/30 hover:border-indigo-300 dark:hover:border-indigo-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+                          Setup
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Card className="overflow-hidden border-none bg-gradient-to-br from-slate-50 to-slate-100 shadow-lg dark:from-slate-900/60 dark:to-slate-800/60 backdrop-blur-sm">
+                <CardHeader className="border-b">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <AlertTriangle className="h-5 w-5 text-amber-500" />
+                    Danger Zone
+                  </CardTitle>
+                  <CardDescription>Critical account actions that should be used with caution</CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-red-200 dark:border-red-900/30 p-5 bg-red-50/50 dark:bg-red-950/20">
+                      <h4 className="text-lg font-bold mb-2 text-red-700 dark:text-red-400">Reset Inheritance Protocol</h4>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        This action will remove all beneficiaries and reset your inheritance settings. This cannot be undone.
+                      </p>
+                      <Button variant="destructive" className="w-full bg-red-600 hover:bg-red-700">Reset Inheritance Settings</Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           </div>
         )
       default:
@@ -544,10 +937,10 @@ export default function App() {
         <Sidebar className="border-r-0 bg-white/80 backdrop-blur-xl dark:bg-slate-950/80">
           <SidebarHeader className="p-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white">
-                <Sparkles className="h-4 w-4" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-600 text-white shadow-lg">
+                <Sparkles className="h-5 w-5" />
               </div>
-              <h2 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h2 className="text-xl font-extrabold bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 bg-clip-text text-transparent">
                 Next of Kin
               </h2>
             </div>
@@ -560,7 +953,7 @@ export default function App() {
                   isActive={activeTab === "dashboard"}
                   className={
                     activeTab === "dashboard"
-                      ? "bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/30 dark:to-blue-900/30"
+                      ? "bg-gradient-to-r from-violet-100 to-pink-100 dark:from-violet-900/30 dark:to-pink-900/30"
                       : ""
                   }
                 >
@@ -574,7 +967,7 @@ export default function App() {
                   isActive={activeTab === "beneficiaries"}
                   className={
                     activeTab === "beneficiaries"
-                      ? "bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30"
+                      ? "bg-gradient-to-r from-indigo-100 to-violet-100 dark:from-indigo-900/30 dark:to-violet-900/30"
                       : ""
                   }
                 >
@@ -614,34 +1007,40 @@ export default function App() {
           </SidebarContent>
           <SidebarFooter className="p-4">
             {userAddress ? (
-              <div className="rounded-xl bg-gradient-to-r from-slate-100 to-slate-200 p-4 dark:from-slate-800 dark:to-slate-700">
+              <motion.div
+                className="rounded-xl bg-gradient-to-r from-slate-100 to-slate-200 p-4 dark:from-slate-800 dark:to-slate-700 shadow-sm hover:shadow-md transition-all"
+                animate={pulseAnimation ? {
+                  boxShadow: ["0 0 0 0 rgba(124, 58, 237, 0)", "0 0 0 10px rgba(124, 58, 237, 0.2)", "0 0 0 20px rgba(124, 58, 237, 0)"],
+                } : {}}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+              >
                 <div className="flex items-center space-x-4">
-                  <Avatar className="ring-2 ring-purple-500 ring-offset-2 ring-offset-background">
+                  <Avatar className="ring-2 ring-violet-500 ring-offset-2 ring-offset-background">
                     <AvatarImage src="/placeholder.svg?height=40&width=40" alt="User" />
-                    <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
+                    <AvatarFallback className="bg-gradient-to-br from-violet-500 via-fuchsia-500 to-pink-500 text-white">
                       {userAddress.slice(0, 2)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-bold text-violet-800 dark:text-violet-300">
                       {userAddress.slice(0, 6)}...{userAddress.slice(-4)}
                     </p>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setUserAddress(null)}
-                      className="mt-1 h-7 px-2 text-xs"
+                      className="mt-1 h-7 px-2 text-xs text-violet-600 hover:text-violet-700 hover:bg-violet-100 dark:text-violet-400 dark:hover:bg-violet-900/30"
                     >
                       <LogOut className="mr-1 h-3 w-3" />
                       Disconnect
                     </Button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ) : (
               <Button
                 onClick={handleConnect}
-                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700"
+                className="w-full bg-gradient-to-r from-violet-600 via-fuchsia-600 to-pink-600 text-white hover:from-violet-700 hover:via-fuchsia-700 hover:to-pink-700 shadow-md hover:shadow-lg transition-all"
               >
                 <UserCircle className="mr-2 h-4 w-4" />
                 Connect Wallet
@@ -664,9 +1063,9 @@ export default function App() {
         </main>
       </div>
       <Dialog open={isInactivityWarningVisible} onOpenChange={setIsInactivityWarningVisible}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md border-none bg-white/90 backdrop-blur-xl dark:bg-slate-900/90 shadow-xl">
           <DialogHeader>
-            <DialogTitle className="flex items-center text-amber-600 dark:text-amber-500">
+            <DialogTitle className="flex items-center text-amber-600 dark:text-amber-500 text-xl">
               <AlertTriangle className="mr-2 h-5 w-5" />
               Inactivity Detected
             </DialogTitle>
@@ -675,20 +1074,23 @@ export default function App() {
               transferred to your designated beneficiaries.
             </DialogDescription>
           </DialogHeader>
-          <div className="rounded-lg bg-amber-50 p-4 dark:bg-amber-900/20">
-            <p className="text-sm text-amber-800 dark:text-amber-300">
-              To prevent automatic asset distribution, please confirm your activity by clicking the button below.
+          <div className="rounded-lg bg-gradient-to-r from-amber-50 to-amber-100/50 p-4 border border-amber-200 dark:from-amber-900/30 dark:to-amber-800/20 dark:border-amber-800/30">
+            <p className="text-sm text-amber-800 dark:text-amber-300 flex items-start">
+              <AlertTriangle className="h-4 w-4 mr-2 mt-0.5" />
+              <span>
+                To prevent automatic asset distribution, please confirm your activity by clicking the button below.
+              </span>
             </p>
           </div>
           <DialogFooter className="mt-4">
             <Button
-              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 shadow-md"
               onClick={() => {
                 setIsInactivityWarningVisible(false)
                 updateLastActiveTimestamp()
               }}
             >
-              I'm Active
+              <CheckCircle2 className="mr-2 h-4 w-4" /> Confirm I'm Active
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -696,4 +1098,3 @@ export default function App() {
     </SidebarProvider>
   )
 }
-
