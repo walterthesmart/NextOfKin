@@ -12,31 +12,69 @@ The Next of Kin smart contract is built on the Stacks blockchain using the Clari
 
 ## How It Works
 
-1. **Deposit STX**: Users deposit their STX tokens into the smart contract by calling the `deposit-stx` function and specifying the amount to deposit.
+1. **Deposit STX**: Users deposit their STX tokens into the smart contract by calling the `deposit` function and specifying the amount to deposit.
 2. **Assign Recipients**: Users can assign up to 10 recipients by calling the `assign-recipients` function and providing the recipient addresses and corresponding amounts. The smart contract stores this information securely.
-3. **Inactivity Monitoring**: The smart contract continuously monitors user activity. If no activity is detected for a period of one year, it triggers the chainhook event.
-4. **Trigger Action**: Upon detecting inactivity, the chainhook triggers the smart contract to execute the `distribute-stx` function, which transfers the specified amounts of STX to the assigned recipients.
-5. **Future Staking**: In upcoming updates, users will be able to call the `stake-stx` function to stake their deposited STX in pools, earning rewards while ensuring their assets are managed appropriately.
+3. **Inactivity Monitoring**: The smart contract continuously monitors user activity. If no activity is detected for a period of one year (52,560 blocks), it triggers the distribution process.
+4. **Trigger Action**: Upon detecting inactivity, the smart contract can execute the `check-and-distribute` function, which transfers the specified amounts of STX to the assigned recipients.
+5. **Withdraw Funds**: Users can withdraw their deposited STX at any time by calling the `withdraw` function, as long as they have sufficient balance.
 
 ## Installation and Usage
 
+### Prerequisites
+- Node.js (v16 or higher)
+- Clarinet CLI
+- Stacks Wallet
+
+### Setup
+
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/yourusername/next-of-kin-smart-contract.git
-    cd next-of-kin-smart-contract
+    git clone https://github.com/walterthesmart/NextOfKin.git
+    cd NextOfKin
     ```
 
-2. **Deploy the Smart Contract**:
-    - Use the Stacks CLI or your preferred method to deploy the smart contract on the Stacks blockchain.
-    - Ensure you have sufficient STX for deployment and transaction fees.
+2. **Install Dependencies**:
+    ```bash
+    npm install
+    cd "NextOfkin UI"
+    npm install
+    ```
 
-3. **Deposit STX and Assign Recipients**:
-    - Call the `deposit` function to deposit your STX tokens.
-    - Call the `set-designated-recipient` function to specify up to 10 recipients and their respective amounts.
+3. **Run Tests**:
+    ```bash
+    npm test
+    ```
 
-4. **Monitor Activity**:
-    - The smart contract will automatically monitor your wallet activity.
-    - If no activity is detected for one year, the contract will trigger the distribution of STX to your assigned recipients.
+4. **Deploy the Smart Contract**:
+    ```bash
+    clarinet deployments apply -p deployments/default.testnet-plan.yaml
+    ```
+
+### Smart Contract Functions
+
+#### Public Functions
+- `deposit(amount: uint)` - Deposit STX tokens into the contract
+- `withdraw(amount: uint)` - Withdraw STX tokens from your balance
+- `assign-recipients(recipients: list)` - Set up to 10 recipients for inheritance
+- `check-and-distribute(user: principal)` - Check inactivity and distribute funds if applicable
+
+#### Read-Only Functions
+- `get-balance(user: principal)` - Get user's deposited balance
+- `get-recipients(user: principal)` - Get user's assigned recipients
+- `get-last-activity(user: principal)` - Get user's last activity timestamp
+
+### Frontend Application
+
+1. **Start the UI**:
+    ```bash
+    cd "NextOfkin UI"
+    npm run dev
+    ```
+
+2. **Connect Your Wallet**:
+    - Open the application in your browser
+    - Connect your Stacks wallet
+    - Start depositing and managing your inheritance settings
 
 ## Contributing
 

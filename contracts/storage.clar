@@ -32,6 +32,14 @@
   })
 )
 
+(define-read-only (max-recipients)
+  MAX_RECIPIENTS
+)
+
+(define-read-only (inactivity-period)
+  INACTIVITY_PERIOD
+)
+
 ;; Private functions
 (define-private (is-authorized (user principal))
   (or 
