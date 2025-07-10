@@ -6,8 +6,8 @@ telemetry = true
 cache_dir = '.cache'
 requirements = []
 
-[contracts.distrubution]
-path = 'contracts/distrubution.clar'
+[contracts.distribution]
+path = 'contracts/distribution.clar'
 clarity_version = 2
 epoch = 2.5
 
