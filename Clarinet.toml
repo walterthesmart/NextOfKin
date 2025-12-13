@@ -8,33 +8,34 @@ requirements = []
 
 [contracts.distribution]
 path = 'contracts/distribution.clar'
-clarity_version = 2
-epoch = 2.5
+clarity_version = 4
+epoch = 3.3
 
 [contracts.main]
 path = 'contracts/main.clar'
-clarity_version = 2
-epoch = 2.5
+clarity_version = 4
+epoch = 3.3
 
 [contracts.storage]
 path = 'contracts/storage.clar'
-clarity_version = 2
-epoch = 2.5
+clarity_version = 4
+epoch = 3.3
+
 [repl.analysis]
 passes = ['check_checker']
 
 [contracts.nok-trait]
 path = 'contracts/nok-trait.clar'
-clarity_version = 2
-epoch = 2.5
+clarity_version = 4
+epoch = 3.3
 
 [contracts.core]
 path = 'contracts/core.clar'
-clarity_version = 2
-epoch = 2.5
+clarity_version = 4
+epoch = 3.3
 
 [repl.analysis.check_checker]
 strict = false
 trusted_sender = false
-trusted_caller = false
+trusted_caller = true
 callee_filter = false
